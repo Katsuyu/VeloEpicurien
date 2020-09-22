@@ -1,0 +1,34 @@
+name: Build
+
+on:
+  push:
+    branches:
+     - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 100
+
+    - name: Check changed dependencies
+      uses: marceloprado/has-changed-path@master
+      id: app-deps
+      with:
+        paths: Dockerfile package.json package-lock.json prisma src tsconfig.json
+
+    - name: Build and push the Docker image
+      uses: docker/build-push-action@v1
+      if: steps.app-deps.outputs.changed == 'true'
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: lechaterrant/api-template/app
+        registry: docker.pkg.github.com
+        tag_with_ref: true
+        tag_with_sha: true
+        add_git_labels: true
