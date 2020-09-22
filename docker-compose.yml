@@ -5,36 +5,23 @@ services:
     container_name: app
     build: .
     environment:
-      - PORT
-      - MODE
-      - DB_URL
+      - PORT=80
+      - MODE=dev
+      - DB_URL=postgresql://root:dbpass@db:5432/app
     ports:
-      - "${PORT}:${PORT}"
+      - "80:80"
     networks:
       - backend
     volumes:
       - ./logs:/app/logs
 
-  studio:
-    container_name: studio
-    build: .
-    command:
-      - db:studio
-    environment:
-      - DB_URL
-      - STUDIO_PORT
-    ports:
-      - "${STUDIO_PORT}:${STUDIO_PORT}"
-    networks:
-      - backend
-
   db:
     container_name: db
     image: postgres:alpine
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASS}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=dbpass
+      - POSTGRES_DB=app
     networks:
       - backend
     volumes:

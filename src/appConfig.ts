@@ -11,7 +11,6 @@ export enum MODES {
 
 export const config = {
   port: env('PORT').asPortNumber(),
-  sessionSecret: env('SESSION_SECRET').asString(),
   mode: env('MODE').asEnum(Object.values(MODES)),
   dbUrl: env('DB_URL').asString(),
   saltRounds: 12,
