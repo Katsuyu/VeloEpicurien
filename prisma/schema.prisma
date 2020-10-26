@@ -7,7 +7,8 @@ datasource db {
   url      = env("DB_URL")
 }
 
-model User {
+model Restaurant {
   id        String   @default(cuid()) @id
-  createdAt DateTime @default(now())
+  registeredAt DateTime @default(now())
+  name      String
 }
