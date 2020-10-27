@@ -34,8 +34,11 @@ const getData = async (squareArray) => {
   relationList = element.filter((e) => e.type === "relation");
 
   console.log(`node = ${nodeList.length}`);
+  console.log(nodeList[0]);
   console.log(`way = ${wayList.length}`);
+  console.log(wayList[0]);
   console.log(`relation = ${relationList.length}`);
+  console.log(relationList[0]);
   console.log(nodeList.length + wayList.length + relationList.length === element.length ? "On est bons !" : "Y'a une couille dans le paté")
 }
 
