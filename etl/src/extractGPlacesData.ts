@@ -158,6 +158,7 @@ async function test() {
   });
   console.log(`Retrieved ${restaurants.length} restaurants in Paris XXVIIIème`);
   restaurants.forEach((restaurant) => console.log(restaurant.name));
+  console.log(restaurants[0]);
 }
 
 test();
