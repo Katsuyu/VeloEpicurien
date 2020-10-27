@@ -43,7 +43,7 @@ async function getData(squareArray: Array<Array<number>>) {
   console.log(`node = ${nodeList.length}`);
   console.log(`way = ${wayList.length}`);
   console.log(`relation = ${relationList.length}`);
-  console.log(nodeList.length + wayList.length + relationList.length === element.length ? 'On est bons !' : 'Y\'a une couille dans le paté'');
+  console.log(nodeList.length + wayList.length + relationList.length === element.length ? 'On est bons !' : 'Y\'a une couille dans le paté');
 }
 
 // Paris 18eme : 2.328813,48.883731,2.370398,48.897501
