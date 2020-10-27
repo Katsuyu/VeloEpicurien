@@ -1,34 +1,66 @@
-import { Client as PgClient, QueryResult } from 'pg';
+import { Place } from '@googlemaps/google-maps-services-js';
+import { MongoClient } from 'mongodb';
 import logger from './appLogger';
+import { GPlacesClient } from './extractGPlacesData';
 
-async function pgLog(query: Promise<QueryResult<any>>): Promise<void> {
-  logger.info(`[POSTGRESQL] ${(await query).command}`);
-}
+async function seedRestaurants(mongo: MongoClient): Promise<void> {
+  const collection = mongo.db('veloepicurien').collection('restaurants');
 
-async function createPostgresTables(pgClient: PgClient): Promise<void> {
-  await pgLog(pgClient.query(`
-    DROP TABLE IF EXISTS restaurant
-  `));
+  logger.info('Preparing MongoDB indexes...');
+  await collection.createIndex({
+    location: '2dsphere',
+  });
 
-  await pgLog(pgClient.query(`
-    CREATE TABLE restaurant (
-      id SERIAL,
-      name character varying NOT NULL
-    )
-  `));
+  const oldDocumentsCount = await collection.countDocuments();
+  logger.info(`There are currently ${oldDocumentsCount} restaurants stored in the database.`);
+
+  logger.info('Creating Google Places client...');
+  const gPlacesClient = new GPlacesClient(process.env.GPLACES_API_KEY as string, false);
+
+  logger.info('Retrieving data...');
+
+  const processBatch = async (restaurants: Partial<Place>[]) => {
+    for (const restaurant of restaurants) {
+      // eslint-disable-next-line no-await-in-loop
+      await collection.updateOne({
+        placeId: restaurant.place_id,
+      }, {
+        $set: {
+          place_id: restaurant.place_id,
+          location: {
+            type: 'Point',
+            coordinates: [restaurant.geometry?.location.lng, restaurant.geometry?.location.lat],
+          },
+          name: restaurant.name,
+          types: restaurant.types,
+          rating: restaurant.rating,
+          totalRating: restaurant.user_ratings_total,
+        },
+      }, {
+        upsert: true,
+      });
+    }
+  };
+
+  await gPlacesClient.getAllRestaurantsBetween({
+    minLat: 48.883731,
+    maxLat: 48.897501,
+    minLng: 2.328813,
+    maxLng: 2.370398,
+  }, processBatch);
+
+  const documentsCount = await collection.countDocuments();
+  logger.info(`There are now ${documentsCount} restaurants stored in the database (+${documentsCount - oldDocumentsCount}).`);
 }
 
 async function main(): Promise<void> {
-  logger.info('Connecting to Postgresql...');
-  const pgClient = new PgClient({
-    connectionString: process.env.DB_URL,
-  });
-  await pgClient.connect();
+  logger.info('Connecting to MongoDB...');
+  const mongo = new MongoClient(process.env.MONGO_URL as string);
+  await mongo.connect();
 
-  logger.info('Creating Postgresql tables...');
-  await createPostgresTables(pgClient);
+  await seedRestaurants(mongo);
 
-  await pgClient.end();
+  await mongo.close();
 }
 
 main();

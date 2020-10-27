@@ -7,7 +7,7 @@ services:
       context: .
     environment:
       - NODE_ENV=production
-      - DB_URL=postgresql://root:dbpass@postgres:5432/app
+      - MONGO_URL=mongodb+srv://root:mongopass@mongo:27017
     ports:
       - 8080:80
     networks:
@@ -15,18 +15,17 @@ services:
     volumes:
       - ./logs/app:/app/logs
 
-  postgres:
-    image: postgres:alpine
+  mongo:
+    image: mongo:latest
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=dbpass
-      - POSTGRES_DB=app
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=mongopass
     ports:
-      - 5432:5432
+      - 27017:27017
     networks:
       - backend
     volumes:
-      - ./_dbdata/pg:/var/lib/postgresql/data
+      - ./_dbdata/mongo:/data/db
 
   neo4j:
     image: bitnami/neo4j:latest

@@ -1,8 +1,11 @@
 import axios, { AxiosInstance } from 'axios';
 import { Place, PlaceType1 } from '@googlemaps/google-maps-services-js';
+import logger from './appLogger';
 
+type MaybePromise<T> = T | Promise<T>;
+type ProcessBatchCb = (places: Partial<Place>[]) => MaybePromise<void>;
 
-class GPlacesClient {
+export class GPlacesClient {
   private readonly client: AxiosInstance;
 
   private readonly key: string;
@@ -16,16 +19,16 @@ class GPlacesClient {
 
     if (debug) {
       this.client.interceptors.request.use((request) => {
-        console.log(`${request.method} - ${request.baseURL}${request.url}`);
-        if (request.params) console.log(`Query params : ${JSON.stringify(request.params, null, 2)}`);
-        if (request.data) console.log(`Body : ${JSON.stringify(request.data, null, 2)}`);
+        logger.debug(`${request.method} - ${request.baseURL}${request.url}`);
+        if (request.params) logger.debug(`Query params: ${JSON.stringify(request.params, null, 2)}`);
+        if (request.data) logger.debug(`Body: ${JSON.stringify(request.data, null, 2)}`);
         return request;
       });
 
       this.client.interceptors.response.use((response) => {
-        console.log(`Status : ${response.status} - ${response.statusText}`);
+        logger.debug(`Status : ${response.status} - ${response.statusText}`);
         if (response.status > 300) {
-          console.error(response.data);
+          logger.error(response.data);
         }
         return response;
       });
@@ -64,33 +67,29 @@ class GPlacesClient {
     maxLat: number;
     minLng: number;
     maxLng: number;
-  }) {
+  }, processBatch: ProcessBatchCb) {
     const latInc = 0.001834999999999809 / 2; // ~100m in lat
     const lngInc = 0.0027250000000003105 / 2; // ~100m in lng
     const radius = 200 / 2; // 100m
-    const restaurants: {[key: string]: Place} = {};
 
     for (let lat = params.minLat; lat <= params.maxLat; lat += latInc) {
       for (let lng = params.minLng; lng <= params.maxLng; lng += lngInc) {
-        let resultCount = 0;
+        const restaurants = [];
+
         // eslint-disable-next-line no-await-in-loop
         for await (const newRestaurants of this.getRestaurantsNearby({ lat, lng, radius })) {
-          for (const newRestaurant of newRestaurants) {
-            resultCount += 1;
-            if (!newRestaurant.place_id) {
-              console.error('A restaurant was found without ID ! Well played, Google !');
-            } else {
-              restaurants[newRestaurant.place_id] = newRestaurant;
-            }
-          }
+          restaurants.push(...newRestaurants.filter((r) => r.place_id));
         }
-        console.log(`${resultCount} restaurants found in a circle of ${radius} meters around ${lat},${lng}.`);
-        if (resultCount >= 60) {
-          console.error('You should maybe reduce circle\'s radius');
+
+        logger.info(`Found ${restaurants.length} restaurants in a circle of ${radius} meters around ${lat},${lng}.`);
+        if (restaurants.length >= 60) {
+          logger.warn('You should maybe reduce circle\'s radius');
         }
+
+        // eslint-disable-next-line no-await-in-loop
+        await processBatch(restaurants);
       }
     }
-    return Object.values(restaurants);
   }
 
   /**
@@ -134,7 +133,7 @@ class GPlacesClient {
         },
       });
       if (res.status >= 300) {
-        console.error('An error occured !');
+        logger.error('An error occured!');
         return;
       }
 
@@ -147,18 +146,20 @@ class GPlacesClient {
   }
 }
 
-
 async function test() {
   const gPlacesClient = new GPlacesClient('AIzaSyAPUn2r10zmq_JEauPmsFWINsWk4avl3cc', false);
+
+  const processBatch = (restaurants: Partial<Place>[]) => {
+    console.log(`Retrieved ${restaurants.length} restaurants in Paris XXVIIIème`);
+    restaurants.forEach((restaurant) => console.log(restaurant.name));
+  };
+
   const restaurants = await gPlacesClient.getAllRestaurantsBetween({
     minLat: 48.883731,
     maxLat: 48.897501,
     minLng: 2.328813,
     maxLng: 2.370398,
-  });
-  console.log(`Retrieved ${restaurants.length} restaurants in Paris XXVIIIème`);
-  restaurants.forEach((restaurant) => console.log(restaurant.name));
-  console.log(restaurants[0]);
+  }, processBatch);
 }
 
-test();
+// test();
