@@ -6,7 +6,6 @@ services:
       - NODE_ENV=development
 
   etl:
-    container_name: etl
     build:
       dockerfile: Dockerfile.ETL
       context: .
