@@ -10,7 +10,8 @@ services:
       dockerfile: Dockerfile.ETL
       context: .
     environment:
-      - DB_URL=postgresql://root:dbpass@postgres:5432/app
+      - MONGO_URL=mongodb+srv://root:mongopass@mongo:27017
+      - GPLACES_API_KEY=AIzaSyAPUn2r10zmq_JEauPmsFWINsWk4avl3cc
     networks:
       - backend
     volumes:
