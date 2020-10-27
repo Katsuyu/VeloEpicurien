@@ -34,6 +34,9 @@ class GPlacesClient {
     let done = false;
 
     while (!done) {
+      // Sleep 3s before accessing new page, to let Google some time to generate it
+      if (nextPageToken) await new Promise((resolve) => setTimeout(resolve, 3000));
+
       // eslint-disable-next-line no-await-in-loop
       const res = await this.client.get('maps/api/place/textsearch/json', {
         params: {
