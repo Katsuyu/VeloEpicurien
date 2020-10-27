@@ -3,17 +3,18 @@ version: '3'
 services:
   app:
     container_name: app
-    build: .
+    build:
+      dockerfile: Dockerfile
+      context: .
     environment:
-      - PORT=80
-      - MODE=dev
+      - NODE_ENV=production
       - DB_URL=postgresql://root:dbpass@postgres:5432/app
     ports:
-      - 80:80
+      - 8080:80
     networks:
       - backend
     volumes:
-      - ./logs:/app/logs
+      - ./logs/app:/app/logs
 
   postgres:
     container_name: postgres
@@ -25,7 +26,7 @@ services:
     networks:
       - backend
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - ./_dbdata/pg:/var/lib/postgresql/data
 
   neo4j:
     container_name: neo4j
@@ -37,9 +38,8 @@ services:
       - NEO4J_BOLT_PORT_NUMBER=7687
     networks:
       - backend
+    volumes:
+      - ./_dbdata/neo4j:/data
 
 networks:
   backend:
-
-volumes:
-  db-data:

@@ -6,14 +6,12 @@ import httpStatus from 'http-status-codes';
 /*  This import is only used for class-transformer side effects */
 import 'reflect-metadata';
 
-import { config } from './appConfig';
 import logger from './appLogger';
 import router from './components';
 import { ErrorRo } from './appRo';
 
 /*  Express server  */
 const app = express();
-const { port } = config;
 
 /*  Middlewares */
 app.use(morgan('tiny'));
@@ -51,4 +49,5 @@ process.on('uncaughtException', (e) => logger.error(e));
 /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
 process.on('unhandledRejection', (e: any) => logger.error(e ? e.stack : e));
 
+const port = 8080;
 app.listen(port, () => logger.info(`Server listening on port ${port}...`));
