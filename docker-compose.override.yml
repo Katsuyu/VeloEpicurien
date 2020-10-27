@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  app:
+    environment:
+      - NODE_ENV=development
+
+  etl:
+    container_name: etl
+    build:
+      dockerfile: Dockerfile.ETL
+      context: .
+    environment:
+      - DB_URL=postgresql://root:dbpass@postgres:5432/app
+    networks:
+      - backend
+    volumes:
+      - ./logs/etl:/app/logs

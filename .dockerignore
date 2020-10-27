@@ -1,6 +1,6 @@
 .git
-*Dockerfile*
-*docker-compose*
-node_modules
-dist
-logs
+/Dockerfile*
+/docker-compose*.yml
+/node_modules
+/dist
+/logs
