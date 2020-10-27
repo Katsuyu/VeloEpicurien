@@ -41,7 +41,7 @@ class GPlacesClient {
    * @param lng2 Longitude of the second point
    * @return Distance (in meters)
    */
-  distanceBetween(lat1: number, lng1: number, lat2: number, lng2: number) {
+  static distanceBetween(lat1: number, lng1: number, lat2: number, lng2: number) {
     const R = 6378.137; // Radius of earth in KM
     const dLat = (lat2 * Math.PI) / 180 - (lat1 * Math.PI) / 180;
     const dLng = (lng2 * Math.PI) / 180 - (lng1 * Math.PI) / 180;
