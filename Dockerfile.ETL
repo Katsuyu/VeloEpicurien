@@ -6,4 +6,4 @@ WORKDIR /app
 RUN npm install --no-optional
 RUN npm run build-etl
 
-CMD [ "node", "dist/etl/src/app.js" ]
+CMD [ "npm", "run", "etl" ]

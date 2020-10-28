@@ -14,8 +14,10 @@
     "test": "exit 0",
     "integration": "exit 0",
     "start": "ts-node src/app.ts",
-    "etl": "ts-node etl/src/app.ts",
-    "lint": "eslint './src/**/*.{ts,tsx}' --fix"
+    "etl": "npm run wait:mongo && npm run wait:neo4j && node dist/etl/src/app.js",
+    "lint": "eslint './src/**/*.{ts,tsx}' --fix",
+    "wait:mongo": "export WAIT_HOSTS=mongo:27017 && ./misc/wait && echo \"Mongo is ready\"",
+    "wait:neo4j": "export WAIT_HOSTS=neo4j:7687 && ./misc/wait && echo \"Neo4j is ready\""
   },
   "keywords": [],
   "author": "",

@@ -1,7 +1,6 @@
 import neo4j from 'neo4j-driver';
 import { get } from 'env-var';
 
-import { stream } from 'winston';
 import extractOsmData from './extractOsmData';
 
 const env = (name: string, required = true) => get(name).required(required);
@@ -13,7 +12,7 @@ const config = {
   password: env('NEO4J_PASSWORD').asString(),
 };
 
-const driver = neo4j.driver(`${config.host}:${config.port}`, neo4j.auth.basic(config.user, config.password));
+const driver = neo4j.driver(`${config.host}:${config.port}`);
 const db = driver.session();
 
 type Node = any;
@@ -51,8 +50,9 @@ async function createLink(
   MATCH
     (point1:Point {id: "${node1Id}"}),
     (point2:Point {id: "${node2Id}"})
-  CREATE
-    (point1) -[:Route {name: "${way?.tags?.name ?? 'Unknown'}"}]-> (point2),
+  MERGE
+    (point1) -[:Route {name: "${way?.tags?.name ?? 'Unknown'}"}]-> (point2)
+  MERGE
     (point2) -[:Route {name: "${way?.tags?.name ?? 'Unknown'}"}]-> (point1)
   `;
 
@@ -129,4 +129,6 @@ async function test() {
   console.log('Finished :)');
 }
 
+/*
 test();
+*/

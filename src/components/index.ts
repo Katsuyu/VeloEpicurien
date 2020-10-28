@@ -1,7 +1,23 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
+import neo4j from 'neo4j-driver';
+import { get } from 'env-var';
 
+const env = (name: string, required = true) => get(name).required(required);
+
+const config = {
+  host: env('NEO4J_HOST').asUrlString(),
+  port: env('NEO4J_PORT').asPortNumber(),
+  user: env('NEO4J_USER').asString(),
+  password: env('NEO4J_PASSWORD').asString(),
+};
+
+/*  MongoDB */
 const mongo = new MongoClient(process.env.MONGO_URL as string);
+
+/*  Neo4J */
+const driver = neo4j.driver(`${config.host}:${config.port}`);
+const neo = driver.session();
 
 async function connectMongo() {
   if (!mongo.isConnected()) {
@@ -19,7 +35,7 @@ router.get('/extracted_data', async (req, res) => {
 
   res.send({
     nbRestaurants: await mongo.db('veloepicurien').collection('restaurants').countDocuments(),
-    nbSegments: 0,
+    nbSegments: await neo.run('MATCH ()-[segment:Route]-() RETURN count(segment)'),
   });
 });
 

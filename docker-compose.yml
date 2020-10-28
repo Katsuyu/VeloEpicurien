@@ -6,8 +6,11 @@ services:
       dockerfile: Dockerfile
       context: .
     environment:
-      - NODE_ENV=production
       - MONGO_URL=mongodb+srv://root:mongopass@mongo:27017
+      - NEO4J_HOST=neo4j://neo4j
+      - NEO4J_PORT=7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=neo4j
     ports:
       - 8080:80
     networks:
@@ -28,9 +31,9 @@ services:
       - ./_dbdata/mongo:/data/db
 
   neo4j:
-    image: bitnami/neo4j:latest
+    image: neo4j:latest
     environment:
-      - NEO4J_PASSWORD=neo4jpass
+      - NEO4J_AUTH=none
     ports:
       - 7474:7474
       - 7687:7687

@@ -1,7 +1,9 @@
 import { Place } from '@googlemaps/google-maps-services-js';
 import { MongoClient } from 'mongodb';
+
 import logger from './appLogger';
-import { GPlacesClient } from './extractGPlacesData';
+import { GPlacesClient } from './GPlacesClient';
+import fillNeo4j from './fillNeo4j';
 
 async function seedRestaurants(mongo: MongoClient): Promise<void> {
   const collection = mongo.db('veloepicurien').collection('restaurants');
@@ -61,6 +63,8 @@ async function main(): Promise<void> {
   await seedRestaurants(mongo);
 
   await mongo.close();
+
+  await fillNeo4j();
 }
 
 main();
