@@ -12,7 +12,7 @@ services:
       - NEO4J_USER=neo4j
       - NEO4J_PASSWORD=neo4j
     ports:
-      - 8080:80
+      - 80:8080
     networks:
       - backend
     volumes:

@@ -1,6 +1,6 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
-import neo4j from 'neo4j-driver';
+import neo4j, { Session } from 'neo4j-driver';
 import { get } from 'env-var';
 
 const env = (name: string, required = true) => get(name).required(required);
@@ -13,16 +13,22 @@ const config = {
 };
 
 /*  MongoDB */
-const mongo = new MongoClient(process.env.MONGO_URL as string);
+const mongo = new MongoClient(process.env.MONGO_URL as string, {
+  useUnifiedTopology: true,
+});
 
 /*  Neo4J */
-const driver = neo4j.driver(`${config.host}:${config.port}`);
-const neo = driver.session();
+let driver;
 
 async function connectMongo() {
   if (!mongo.isConnected()) {
     await mongo.connect();
   }
+}
+
+function connectNeo(): Session {
+  driver = neo4j.driver(`${config.host}:${config.port}`);
+  return driver.session();
 }
 
 const router = express.Router();
@@ -32,6 +38,7 @@ router.get('/heartbeat', (req, res) => res.send({ villeChoisie: 'Paris XVIIIème
 
 router.get('/extracted_data', async (req, res) => {
   await connectMongo();
+  const neo = connectNeo();
 
   res.send({
     nbRestaurants: await mongo.db('veloepicurien').collection('restaurants').countDocuments(),
@@ -41,6 +48,7 @@ router.get('/extracted_data', async (req, res) => {
 
 router.get('/transformed_data', async (req, res) => {
   await connectMongo();
+  const neo = connectNeo();
 
   const restaurantsStats = await mongo.db('veloepicurien').collection('restaurants').aggregate([
     { $unwind: { path: '$types' } },
@@ -48,11 +56,13 @@ router.get('/transformed_data', async (req, res) => {
   ]).toArray();
 
   res.send({
-    restaurants: restaurantsStats.map((stat) => ({
-      [stat._id]: stat.count,
-    })),
-    // Since every nodes are connected in a bidirectional way, we divide the number of Routes by 2
-    // Real distance will be used later, since openStreetMap API doesn't provide this information (even if they documented that they would)
+    restaurants: restaurantsStats.reduce((current, stat) => {
+      current[stat._id] = stat.count;
+      return current;
+    }, {}),
+    // Since every nodes are connected in a bidirectional way, we divide the number
+    // of Routes by 2. Real distance will be used later, since openStreetMap API doesn't
+    // provide this information (even if they documented that they would)
     longueurCyclable: (await neo.run('MATCH ()-[segment:Route]-() RETURN segment')).records.length / 2,
   });
 });
