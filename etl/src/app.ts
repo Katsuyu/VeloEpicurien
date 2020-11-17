@@ -4,6 +4,7 @@ import { MongoClient } from 'mongodb';
 import logger from './appLogger';
 import { GPlacesClient } from './GPlacesClient';
 import fillNeo4j from './fillNeo4j';
+import placeRestaurantsInNeo4j from './placeRestaurantsInNeo4j';
 
 async function seedRestaurants(mongo: MongoClient): Promise<void> {
   const collection = mongo.db('veloepicurien').collection('restaurants');
@@ -62,9 +63,11 @@ async function main(): Promise<void> {
 
   await seedRestaurants(mongo);
 
-  await mongo.close();
-
   await fillNeo4j();
+
+  await placeRestaurantsInNeo4j(mongo);
+
+  await mongo.close();
 }
 
 main();

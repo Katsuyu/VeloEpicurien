@@ -20,19 +20,16 @@ type Node = any;
 async function createNode(nodes: { [key: string]: Node }, nodeId: string) {
   const node = nodes[nodeId];
   if (!node) {
-    console.log('Turbo pas yay');
     return false;
   }
 
-  const query = `MERGE (:Point {id: "${node.id}", lat: "${node.lat}", lng: "${node.lon}"})`;
+  const query = `MERGE (:Point {id: "${node.id}", lat: toFloat("${node.lat}"), lng: toFloat("${node.lon}")})`;
 
   try {
-    console.log('Creating node');
     const result = await db.run(query);
     console.log(`Success node ${nodeId}`);
     return true;
   } catch (error) {
-    console.log('Point - failure :(');
     console.error(error);
     return false;
   }
@@ -43,7 +40,6 @@ async function createLink(
   way: any, node1Id: string, node2Id: string,
 ) {
   if (!nodes[node1Id] || !nodes[node2Id]) {
-    console.log('Turbo pas yay, link version :(');
     return false;
   }
   const query = `
@@ -51,18 +47,15 @@ async function createLink(
     (point1:Point {id: "${node1Id}"}),
     (point2:Point {id: "${node2Id}"})
   MERGE
-    (point1) -[:Route {name: "${way?.tags?.name ?? 'Unknown'}"}]-> (point2)
+    (point1) -[:Route {name: "${way?.tags?.name ?? 'Unknown'}", length: distance(point({latitude: point1.lat, longitude: point1.lng}), point({latitude: point2.lat, longitude: point2.lng}))}]-> (point2)
   MERGE
-    (point2) -[:Route {name: "${way?.tags?.name ?? 'Unknown'}"}]-> (point1)
+    (point2) -[:Route {name: "${way?.tags?.name ?? 'Unknown'}", length: distance(point({latitude: point1.lat, longitude: point1.lng}), point({latitude: point2.lat, longitude: point2.lng}))}]-> (point1)
   `;
 
   try {
-    console.log('Creating rel');
     const result = await db.run(query);
-    console.log('Success rel');
     return true;
   } catch (error) {
-    console.log('Link - failure :(');
     console.error(error);
     return false;
   }
