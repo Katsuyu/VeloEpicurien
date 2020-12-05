@@ -3,7 +3,7 @@ import config from './appConfig';
 import logger from './appLogger';
 import waitApp from './utils/waitApp';
 
-const { port } = config;
+const port = 8080;
 
 (async function main() {
   await waitApp();
