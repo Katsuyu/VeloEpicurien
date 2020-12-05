@@ -5,3 +5,4 @@
 /dist
 /logs
 _dbdata
+neo4j_plugins
