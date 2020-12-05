@@ -9,11 +9,11 @@
   },
   "scripts": {
     "build": "tsc",
+    "start": "npm run wait:mongo && npm run wait:neo4j && node dist",
     "build-etl": "tsc --build etl/tsconfig.json",
     "dev:db": "docker run --name neo4j -e NEO4J_PASSWORD=${NEO4J_PASSWORD} -e NEO4J_BOLT_PORT_NUMBER=${NEO4J_PORT} -p ${NEO4J_PORT}:${NEO4J_PORT} -e NEO4J_HTTP_PORT_NUMBER=${NEO4J_HTTP_PORT} -p ${NEO4J_HTTP_PORT}:${NEO4J_HTTP_PORT} -e NEO4J_HTTPS_PORT_NUMBER=${NEO4J_HTTPS_PORT} -p ${NEO4J_HTTPS_PORT}:${NEO4J_HTTPS_PORT} -d bitnami/neo4j:latest",
     "test": "exit 0",
     "integration": "exit 0",
-    "start": "ts-node src/",
     "etl": "npm run wait:mongo && npm run wait:neo4j && node dist/etl/src/app.js",
     "lint": "eslint './src/**/*.{ts,tsx}' --fix",
     "wait:mongo": "export WAIT_HOSTS=mongo:27017 && ./misc/wait && echo \"Mongo is ready\"",

@@ -8,4 +8,5 @@ RUN npm run build
 
 EXPOSE $PORT
 
-CMD [ "node", "dist/app/src/app.js" ]
+ENTRYPOINT [ "npm", "run" ]
+CMD [ "start" ]

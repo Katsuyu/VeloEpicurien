@@ -3,6 +3,7 @@ import neo4j from '../../appNeo4j';
 
 export async function getExtractedData() {
   const nbRestaurants = await mongo
+    .db('veloepicurien')
     .collection('restaurants')
     .countDocuments();
 
@@ -16,6 +17,7 @@ export async function getExtractedData() {
 
 export async function getTransformedData() {
   const restaurantsStats = await mongo
+    .db('veloepicurien')
     .collection('restaurants')
     .aggregate([
       { $unwind: { path: '$types' } },
