@@ -1,6 +1,7 @@
 import express from 'express';
 
 import data from './data/dataRoutes';
+import itinerary from './itinerary/itineraryRoutes';
 
 const router = express.Router();
 
@@ -10,5 +11,6 @@ router.get('/heartbeat', (req, res) => res.send({
 }));
 
 router.use(data);
+router.use(itinerary);
 
 export default router;
