@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile
       context: .
     environment:
+      - MODE=dev
       - MONGO_URL=mongodb://root:mongopass@mongo:27017
       - NEO4J_HOST=neo4j://neo4j
       - NEO4J_PORT=7687
