@@ -3,7 +3,7 @@ import handler from 'express-async-handler';
 
 import validate from '../../middlewares/validationMiddleware';
 import * as controllers from './itineraryControllers';
-import {GenerateItineraryDto, StartingPointDto} from './itineraryTypes';
+import { GenerateItineraryDto, StartingPointDto } from './itineraryTypes';
 
 const router = express.Router();
 

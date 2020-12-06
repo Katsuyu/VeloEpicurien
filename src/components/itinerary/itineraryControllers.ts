@@ -86,6 +86,25 @@ async function itineraryBetween(from: Point, to: Point) {
   return segment;
 }
 
+function adjustStopNumber(itinerary: Array<Restaurant | Segment>, numberOfStops: number) {
+  let stopNumber = itinerary.reduce((acc, val) => acc + +(val instanceof Restaurant), 0);
+
+  let toggle = false;
+  let { length } = itinerary;
+  for (let i = 0; stopNumber > numberOfStops; i += 1) {
+    const index = i % length;
+    const elem = itinerary[index];
+    if (elem instanceof Restaurant) {
+      if (toggle) {
+        itinerary.splice(index, 1);
+        length -= 1;
+        stopNumber -= 1;
+      }
+      toggle = !toggle;
+    }
+  }
+}
+
 export async function generateItinerary(payload: GenerateItineraryDto) {
   const { startingPoint } = payload;
 
@@ -111,7 +130,7 @@ export async function generateItinerary(payload: GenerateItineraryDto) {
   );
   const initialDistance = nearestPoints.records[0].get('d');
 
-  const itinerary: Array<Restaurant | Segment> = [];
+  let itinerary: Array<Restaurant | Segment> = [];
   const visitedRestaurants = [];
   let totalDistance = initialDistance;
   let last: Point = itineraryStart;
@@ -142,6 +161,8 @@ export async function generateItinerary(payload: GenerateItineraryDto) {
   if (totalDistance > 1.1 * payload.maximumLength) {
     throw createError(httpStatus.EXPECTATION_FAILED, 'No itinerary found within +-10% of the asked length');
   }
+
+  adjustStopNumber(itinerary, payload.numberOfStops);
 
   return {
     type: 'FeatureCollection',
