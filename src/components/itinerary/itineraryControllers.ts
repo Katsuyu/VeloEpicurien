@@ -130,7 +130,7 @@ export async function generateItinerary(payload: GenerateItineraryDto) {
   );
   const initialDistance = nearestPoints.records[0].get('d');
 
-  let itinerary: Array<Restaurant | Segment> = [];
+  const itinerary: Array<Restaurant | Segment> = [];
   const visitedRestaurants = [];
   let totalDistance = initialDistance;
   let last: Point = itineraryStart;

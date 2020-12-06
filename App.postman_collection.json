@@ -1,144 +1,1650 @@
 {
 	"info": {
-		"_postman_id": "dd60ca15-93d8-47f5-8b8f-6e1ca47a216f",
-		"name": "App",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	  "_postman_id": "51e1058e-15ff-471f-bd9f-040274f80aab",
+	  "name": "glo-4035",
+	  "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
-		{
-			"name": "Signup",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\": \"test.test@epitech.eu\",\n\t\"name\": \"Test account\",\n\t\"password\": \"password\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{API}}/users/signup",
-					"host": [
-						"{{API}}"
-					],
-					"path": [
-						"users",
-						"signup"
-					]
+	  {
+		"name": "Remise2",
+		"item": [
+		  {
+			"name": "Heartbeat",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "10994368-1efe-4081-a9da-f547bfb514be",
+				  "exec": [
+					"pm.test(\"heartbeat - villeChoisie - 0.5\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData).to.have.property(\"villeChoisie\");",
+					"});"
+				  ],
+				  "type": "text/javascript"
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Users",
+			  }
+			],
 			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{API}}/users",
-					"host": [
-						"{{API}}"
-					],
-					"path": [
-						"users"
-					]
-				}
+			  "method": "GET",
+			  "header": [
+
+			  ],
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/heartbeat",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "heartbeat"
+				]
+			  }
 			},
-			"response": []
-		},
-		{
-			"name": "Get User",
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "Extracted Data",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "e0689108-489d-482d-8c06-48e0021ecda7",
+				  "exec": [
+					"pm.test(\"extracted - property nbRestaurant - 0.25\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData).to.have.property(\"nbRestaurants\");",
+					"});",
+					"",
+					"pm.test(\"extracted - nbRestaurant > 0 - 0.25\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData.nbRestaurants).to.be.gt(0);",
+					"});",
+					"",
+					"pm.test(\"extracted - property nbSegments - 0.25\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData).to.have.property(\"nbSegments\");",
+					"});",
+					"",
+					"pm.test(\"extracted - nbSegment > 0 - 0.25\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData.nbSegments).to.be.gt(0);",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
 			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{API}}/users/me",
-					"host": [
-						"{{API}}"
-					],
-					"path": [
-						"users",
-						"me"
-					]
-				}
+			  "method": "GET",
+			  "header": [
+
+			  ],
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/extracted_data",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "extracted_data"
+				]
+			  }
 			},
-			"response": []
-		},
-		{
-			"name": "Update User",
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "Transformed Data",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "164b23e8-23d6-4ec1-b567-f35538e0755d",
+				  "exec": [
+					"pm.test(\"transformed - property restaurants - 0.25\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData).to.have.property(\"restaurants\");",
+					"});",
+					"",
+					"pm.test(\"transformed - restaurant is array - 0.25\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData.restaurants).to.be.an('object');",
+					"});",
+					"",
+					"pm.test(\"transformed - restaurant had > 1 type - 0.25\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(Object.keys(jsonData.restaurants).count()).to.be.gt(1);",
+					"});",
+					"",
+					"pm.test(\"transformed - property longueurCyclable - 0.25\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData).to.have.property(\"longueurCyclable\");",
+					"});",
+					"",
+					"pm.test(\"transformed - longueurCyclable > 0 - 0.50\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData.longueurCyclable).to.be.gt(0);",
+					"})"
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
 			"request": {
-				"method": "PATCH",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\": \"new.email@epitech.eu\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{API}}/users/me",
-					"host": [
-						"{{API}}"
-					],
-					"path": [
-						"users",
-						"me"
-					]
-				}
+			  "method": "GET",
+			  "header": [
+
+			  ],
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/transformed_data",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "transformed_data"
+				]
+			  }
 			},
-			"response": []
-		},
-		{
-			"name": "Delete User",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{API}}/users/me",
-					"host": [
-						"{{API}}"
-					],
-					"path": [
-						"users",
-						"me"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Signin",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\": \"test.test@epitech.eu\",\n\t\"password\": \"password\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{API}}/users/signin",
-					"host": [
-						"{{API}}"
-					],
-					"path": [
-						"users",
-						"signin"
-					]
-				}
-			},
-			"response": []
+			"response": [
+
+			]
+		  }
+		],
+		"description": "Test pour la remise 2",
+		"protocolProfileBehavior": {
+
 		}
+	  },
+	  {
+		"name": "Remise3",
+		"item": [
+		  {
+			"name": "getLongueurCyclable",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "f8a9a7d0-2724-474b-9e51-954330a9c066",
+				  "exec": [
+					"pm.test(\"setGetLongueurCyclable\", function(){",
+					"var jsonData = pm.response.json();",
+					"pm.expect(jsonData.longueurCyclable).to.be.gt(0);",
+					"pm.globals.set(\"longueurCyclable\",jsonData.longueurCyclable )",
+					"})"
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"request": {
+			  "method": "GET",
+			  "header": [
+
+			  ],
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/transformed_data",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "transformed_data"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "Readme",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "2d7882e7-c85f-46e2-a1cb-b5ab061cb67b",
+				  "exec": [
+					"pm.test(\"readme - 0.25\", function () {",
+					"    ",
+					"});",
+					"",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"request": {
+			  "method": "GET",
+			  "header": [
+
+			  ],
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/readme",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "readme"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "Type",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "25423154-7b29-471c-925a-eecd4c594555",
+				  "exec": [
+					"pm.test(\"type - 5 types de restaurants\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData.length).to.gte(5);",
+					"    pm.globals.set(\"restaurantList\", jsonData);",
+					"});",
+					"",
+					"pm.test(\"type - Les types de restaurants sont des string\", function () {",
+					"    pm.expect(pm.globals.get(\"restaurantList\")[0]).to.be.string",
+					"    pm.expect(pm.globals.get(\"restaurantList\")[2]).to.be.string",
+					"    pm.expect(pm.globals.get(\"restaurantList\")[4]).to.be.string",
+					"    ",
+					"});",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"request": {
+			  "method": "GET",
+			  "header": [
+
+			  ],
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/type",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "type"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "StartingPoint 1-1",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "74ba8fcd-8328-4e33-a5ae-de91f288da9f",
+				  "exec": [
+					"pm.test(\"starting-point - Valid geopoint\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    var startingPoint = jsonData[\"startingPoint\"];",
+					"    pm.expect(startingPoint.type).to.eql(\"Point\");",
+					"    pm.expect(startingPoint.coordinates[0]).to.be.an(\"number\");",
+					"    pm.expect(startingPoint.coordinates[1]).to.be.an(\"number\");",
+					"",
+					"    pm.globals.set(\"startingPoint1-1\",JSON.stringify(startingPoint))",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "9ce0ec18-9135-4bef-9d39-f32ef28d20df",
+				  "exec": [
+					"",
+					"allRestaurantType = pm.globals.get(\"restaurantList\")",
+					"nbRestaurantsType = allRestaurantType.length",
+					"randomRestaurantArray = [",
+					"    allRestaurantType[Math.floor(Math.random() * nbRestaurantsType)],",
+					"    allRestaurantType[Math.floor(Math.random() * nbRestaurantsType)],",
+					"    allRestaurantType[Math.floor(Math.random() * nbRestaurantsType)]",
+					"    ]",
+					"",
+					"pm.globals.set(\"randomRestaurantType-1\",JSON.stringify(randomRestaurantArray))",
+					"",
+					"",
+					"",
+					"maximumLenghts = [5000, 7500, 10000, 12000, 8000, 15000]",
+					"randomMaximumLength = maximumLenghts[Math.floor(Math.random() * maximumLenghts.length)];",
+					"",
+					"pm.globals.set(\"randomMaximumLength-1\",randomMaximumLength)",
+					"",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "value": "application/json",
+				  "type": "text"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":{{randomRestaurantType-1}},\n    \"maximumLength\":{{randomMaximumLength-1}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/starting_point",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "starting_point"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "StartingPoint 1-2",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "bb37d2be-c7c3-4af3-bab6-9c874fc0b8a9",
+				  "exec": [
+					"pm.test(\"starting-point - Valid geopoint\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    var startingPoint = jsonData[\"startingPoint\"];",
+					"    pm.expect(startingPoint.type).to.eql(\"Point\");",
+					"    pm.expect(startingPoint.coordinates[0]).to.be.an(\"number\");",
+					"    pm.expect(startingPoint.coordinates[1]).to.be.an(\"number\");",
+					"",
+					"    pm.globals.set(\"startingPoint1-2\",JSON.stringify(startingPoint))",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "7d4348ce-82ac-4af3-b78b-da52dba24bec",
+				  "exec": [
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "value": "application/json",
+				  "type": "text"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":{{randomRestaurantType-1}},\n    \"maximumLength\":{{randomMaximumLength-1}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/starting_point",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "starting_point"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "StartingPoint 1-3",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "4ecc7441-c050-427d-b528-ffa6da78ab02",
+				  "exec": [
+					"pm.test(\"starting-point - Valid geopoint\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    var startingPoint = jsonData[\"startingPoint\"];",
+					"    pm.expect(startingPoint.type).to.eql(\"Point\");",
+					"    pm.expect(startingPoint.coordinates[0]).to.be.an(\"number\");",
+					"    pm.expect(startingPoint.coordinates[1]).to.be.an(\"number\");",
+					"",
+					"    pm.globals.set(\"startingPoint1-3\",JSON.stringify(startingPoint))",
+					"});",
+					"",
+					"pm.test(\"starting-point - Random geopoint\", function () {",
+					"    startintPoint1 = pm.globals.get(\"startingPoint1-1\")",
+					"    startintPoint2 = pm.globals.get(\"startingPoint1-2\")",
+					"    startintPoint3 = pm.globals.get(\"startingPoint1-3\")",
+					"    ",
+					"    is1and2theSame = startintPoint1 == startintPoint2",
+					"    is2nd3theSame = startintPoint2 == startintPoint3",
+					"    is1nd3theSame = startintPoint1 == startintPoint3",
+					"",
+					"    pm.expect(is1and2theSame & is2nd3theSame & is1nd3theSame).to.be.eq(0);",
+					"});",
+					"",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "c2b68275-1a1c-4336-a247-4df18c70f566",
+				  "exec": [
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "value": "application/json",
+				  "type": "text"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":{{randomRestaurantType-1}},\n    \"maximumLength\":{{randomMaximumLength-1}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/starting_point",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "starting_point"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "StartingPoint 2-1",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "b319c64a-7775-4610-a786-ecfc4f715be0",
+				  "exec": [
+					"pm.test(\"starting-point - Valid geopoint\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    var startingPoint = jsonData[\"startingPoint\"];",
+					"    pm.expect(startingPoint.type).to.eql(\"Point\");",
+					"    pm.expect(startingPoint.coordinates[0]).to.be.an(\"number\");",
+					"    pm.expect(startingPoint.coordinates[1]).to.be.an(\"number\");",
+					"",
+					"    pm.globals.set(\"startingPoint2-1\",JSON.stringify(startingPoint))",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "598cef9a-d818-4bac-9c9f-418a13290e46",
+				  "exec": [
+					"",
+					"allRestaurantType = pm.globals.get(\"restaurantList\")",
+					"nbRestaurantsType = allRestaurantType.length",
+					"randomRestaurantArray = [",
+					"    allRestaurantType[Math.floor(Math.random() * nbRestaurantsType)],",
+					"    allRestaurantType[Math.floor(Math.random() * nbRestaurantsType)],",
+					"    allRestaurantType[Math.floor(Math.random() * nbRestaurantsType)]",
+					"    ]",
+					"",
+					"pm.globals.set(\"randomRestaurantType-2\",JSON.stringify(randomRestaurantArray))",
+					"",
+					"",
+					"",
+					"maximumLenghts = [5000, 7500, 10000, 12000, 8000, 15000]",
+					"randomMaximumLength = maximumLenghts[Math.floor(Math.random() * maximumLenghts.length)];",
+					"",
+					"pm.globals.set(\"randomMaximumLength-2\",randomMaximumLength)",
+					"",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "value": "application/json",
+				  "type": "text"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":{{randomRestaurantType-2}},\n    \"maximumLength\":{{randomMaximumLength-2}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/starting_point",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "starting_point"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "StartingPoint 2-2",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "5fa89de0-a5df-4e94-bf90-28881cb207f6",
+				  "exec": [
+					"pm.test(\"starting-point - Valid geopoint\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    var startingPoint = jsonData[\"startingPoint\"];",
+					"    pm.expect(startingPoint.type).to.eql(\"Point\");",
+					"    pm.expect(startingPoint.coordinates[0]).to.be.an(\"number\");",
+					"    pm.expect(startingPoint.coordinates[1]).to.be.an(\"number\");",
+					"",
+					"    pm.globals.set(\"startingPoint2-2\",JSON.stringify(startingPoint))",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "24574e2a-08a5-4bb1-bec3-1e640dcda1e5",
+				  "exec": [
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "value": "application/json",
+				  "type": "text"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":{{randomRestaurantType-1}},\n    \"maximumLength\":{{randomMaximumLength-1}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/starting_point",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "starting_point"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "StartingPoint 2-3",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "4257c457-6d53-4ea8-a232-12e966320393",
+				  "exec": [
+					"pm.test(\"starting-point - Valid geopoint\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    var startingPoint = jsonData[\"startingPoint\"];",
+					"    pm.expect(startingPoint.type).to.eql(\"Point\");",
+					"    pm.expect(startingPoint.coordinates[0]).to.be.an(\"number\");",
+					"    pm.expect(startingPoint.coordinates[1]).to.be.an(\"number\");",
+					"",
+					"    pm.globals.set(\"startingPoint2-3\",JSON.stringify(startingPoint))",
+					"});",
+					"",
+					"pm.test(\"starting-point - Random geopoint - Prise 2\", function () {",
+					"    startintPoint1 = pm.globals.get(\"startingPoint2-1\")",
+					"    startintPoint2 = pm.globals.get(\"startingPoint2-2\")",
+					"    startintPoint3 = pm.globals.get(\"startingPoint2-3\")",
+					"    ",
+					"    is1and2theSame = startintPoint1 == startintPoint2",
+					"    is2nd3theSame = startintPoint2 == startintPoint3",
+					"    is1nd3theSame = startintPoint1 == startintPoint3",
+					"",
+					"    pm.expect(is1and2theSame & is2nd3theSame & is1nd3theSame).to.be.eq(0);",
+					"});",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "7617c483-cf15-4483-9da4-1a0a952f5194",
+				  "exec": [
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "value": "application/json",
+				  "type": "text"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":{{randomRestaurantType-2}},\n    \"maximumLength\":{{randomMaximumLength-2}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/starting_point",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "starting_point"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "StartingPoint - Error Handling - 1",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "d2f58bb7-3c9b-44e5-9e09-27d2acf6a436",
+				  "exec": [
+					"pm.test(\"starting-point - L'erreur est attrapée\", function () {",
+					"    pm.response.to.have.status(400);",
+					"});",
+					"",
+					"pm.test(\"starting-point - L'erreur est expliquée\", function () {",
+					"    pm.expect(pm.response.text()).to.include(\"maximumLength\");",
+					"});",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "31a63a5f-9d0e-48b4-9de3-cae33bcf2d68",
+				  "exec": [
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "type": "text",
+				  "value": "application/json"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":{{randomRestaurantType-1}},\n    \"maximumLength\":\"badValue\"\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/starting_point",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "starting_point"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "StartingPoint - Error Handling - 2",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "35c1c340-401e-4d86-9812-fe3040ee3639",
+				  "exec": [
+					"pm.test(\"starting-point - L'erreur est attrapée\", function () {",
+					"    pm.response.to.have.status(400);",
+					"});",
+					"",
+					"pm.test(\"starting-point - L'erreur est expliquée\", function () {",
+					"    pm.expect(pm.response.text()).to.include(\"type\");",
+					"});",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "c01062b3-c8be-4da6-b4af-3616adcf2bbc",
+				  "exec": [
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "type": "text",
+				  "value": "application/json"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":\"badValue\",\n    \"maximumLength\":{{randomMaximumLength-1}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/starting_point",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "starting_point"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "StartingPoint - Error Handling - 3",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "628a0063-7f29-4ece-b7ee-9a2aebf0f3ef",
+				  "exec": [
+					"pm.test(\"starting-point - L'erreur est attrapée\", function () {",
+					"    pm.response.to.have.status(400);",
+					"});",
+					"",
+					"pm.test(\"starting-point - L'erreur est expliquée\", function () {",
+					"    pm.expect(pm.response.text()).to.include(\"type\");",
+					"});",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "60730502-cf25-478b-b444-8a0daa91734d",
+				  "exec": [
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "type": "text",
+				  "value": "application/json"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":[323],\n    \"maximumLength\":{{randomMaximumLength-1}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/starting_point",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "starting_point"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "StartingPoint - Error Handling - 4",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "c6fb471c-a43f-40c8-8351-1ab3c05205af",
+				  "exec": [
+					"pm.test(\"starting-point - L'erreur est attrapée\", function () {",
+					"    pm.response.to.have.status(400);",
+					"});",
+					"",
+					"pm.test(\"starting-point - L'erreur est expliquée\", function () {",
+					"    pm.expect(pm.response.text()).to.include(\"type\");",
+					"});",
+					"",
+					"pm.test(\"starting-point - L'erreur est expliquée\", function () {",
+					"    pm.expect(pm.response.text()).to.include(\"maximumLength\");",
+					"});",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "c574bf60-b026-440e-b680-4f27a7a4ea12",
+				  "exec": [
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "type": "text",
+				  "value": "application/json"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":[3321]\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/starting_point",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "starting_point"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "Parcours",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "5d207248-9110-4184-846b-00e6f033d11d",
+				  "exec": [
+					"pm.test(\"parcours - Feature Collection Vide\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData.type).to.eql(\"FeatureCollection\");",
+					"    pm.expect(jsonData.features).is.an(\"Array\");",
+					"});",
+					"",
+					"pm.test(\"parcours - Retourne un parcours\", function () {",
+					"    var parcours = pm.response.json().features;",
+					"    pm.expect(parcours.length).is.gte(2);",
+					"    lineFound = false;",
+					"    pointFound = false;",
+					"",
+					"    for (let i = 0; i < parcours.length; i++) {",
+					"        if(parcours[i].geometry.type == \"MultiLineString\"){        ",
+					"            lineFound=true;",
+					"        }else if(parcours[i].geometry.type == \"Point\"){",
+					"            pointFound=true;",
+					"        }",
+					"    }",
+					"    ",
+					"    pm.expect(lineFound & pointFound).to.eq(1);  ",
+					"});",
+					"",
+					"",
+					"pm.test(\"parcours - Retourne un parcours de la bonne longueur\", function () {",
+					"    var parcoursDesiredLength = pm.globals.get(\"parcoursMaximumLength\")",
+					"    var parcoursLenghtReel = 0 ",
+					"    var parcours = pm.response.json().features;",
+					"",
+					"    for (let i = 0; i < parcours.length; i++) {",
+					"        if(parcours[i].geometry.type == \"MultiLineString\"){",
+					"            parcoursLenghtReel += parcours[i].properties.length",
+					"        }",
+					"    }",
+					"    ",
+					"    pm.expect(parcoursLenghtReel).to.gte((1-0.10)*parcoursDesiredLength);  ",
+					"    pm.expect(parcoursLenghtReel).to.lte((1+0.10)*parcoursDesiredLength);  ",
+					"});",
+					"",
+					"",
+					"pm.test(\"parcours - Retourne un parcours avec le bons nombre d'arrêts\", function () {",
+					"    var parcoursDesiredMaxNumberOfStops = pm.globals.get(\"parcoursNumberOfStops\")",
+					"    var parcoursNumberOfStops = 0 ",
+					"    var parcours = pm.response.json().features;",
+					"",
+					"    for (let i = 0; i < parcours.length; i++) {        ",
+					"        if(parcours[i].geometry.type == \"Point\"){",
+					"            parcoursNumberOfStops += 1",
+					"        }",
+					"    }",
+					"    ",
+					"    pm.expect(parcoursNumberOfStops).to.lte(parcoursDesiredMaxNumberOfStops);  ",
+					"});",
+					"",
+					"",
+					"pm.test(\"parcours - Retourne un parcours avec le bons types de restaurants\", function () {",
+					"    ",
+					"    var parcoursDesiredtype = new Set(JSON.parse(pm.globals.get(\"parcoursRestaurantType\")))",
+					"    var parcoursTypes = new Set()",
+					"    var parcours = pm.response.json().features;",
+					"    ",
+					"    for (let i = 0; i < parcours.length; i++) {    ",
+					"        if(parcours[i].geometry.type == \"Point\"){",
+					"            if(typeof(parcours[i].properties.type)==\"string\"){",
+					"                parcoursTypes.add(parcours[i].properties.type)",
+					"            }else if(typeof(parcours[i].properties.type)==\"object\"){",
+					"                for(let j=0; j<parcours[i].properties.type.length; j++){",
+					"                    parcoursTypes.add(parcours[i].properties.type[j])",
+					"                }",
+					"            } ",
+					"        }",
+					"    }",
+					"    desiredVisitedTypes = parcoursTypes.intersection(parcoursDesiredtype)",
+					"    ",
+					"    pm.expect(desiredVisitedTypes.size).to.gt(0);  ",
+					"});",
+					"",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "a94c96da-53a9-47d0-8532-56d6e837e102",
+				  "exec": [
+					"var run",
+					"var iteration",
+					"",
+					"runRandom = Math.random();",
+					"if(runRandom>0.5){",
+					"    run = 2;",
+					"}else{",
+					"    run = 1;",
+					"}",
+					"",
+					"var iterationRandom = Math.random();",
+					"",
+					"if(iterationRandom<0.33){",
+					"    iteration = 1;",
+					"}else if(iterationRandom>0.67){",
+					"    iteration = 3;",
+					"}else{",
+					"    iteration = 2;",
+					"}",
+					"",
+					"targetRestaurantTypeVariable = \"randomRestaurantType-\" + run",
+					"targetMaximumLengthVariable = \"randomMaximumLength-\" + run",
+					"targetStartingPointVariable = \"startingPoint\" + run + \"-\" + iteration",
+					"",
+					"restaurantType = pm.globals.get(targetRestaurantTypeVariable)",
+					"maximumLength = pm.globals.get(targetMaximumLengthVariable)",
+					"startingPoint = pm.globals.get(targetStartingPointVariable)",
+					"",
+					"pm.globals.set(\"parcoursRestaurantType\", restaurantType)",
+					"pm.globals.set(\"parcoursMaximumLength\", maximumLength)",
+					"pm.globals.set(\"parcoursStartingPoint\", startingPoint)",
+					"pm.globals.set(\"parcoursNumberOfStops\", 10)",
+					"",
+					"Set.prototype.intersection = function(otherSet) ",
+					"{ ",
+					"    // creating new set to store intersection ",
+					"    var intersectionSet = new Set(); ",
+					"  ",
+					"    // Iterate over the values  ",
+					"    for(var elem of otherSet) ",
+					"    { ",
+					"        // if the other set contains a  ",
+					"        // similar value as of value[i] ",
+					"        // then add it to intersectionSet ",
+					"        if(this.has(elem)) ",
+					"            intersectionSet.add(elem); ",
+					"    } ",
+					"  ",
+					"// return values of intersectionSet ",
+					"return intersectionSet;                 ",
+					"} "
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "type": "text",
+				  "value": "application/json"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":{{parcoursRestaurantType}},\n    \"maximumLength\":{{parcoursMaximumLength}},\n    \"startingPoint\":{{parcoursStartingPoint}},\n    \"numberOfStops\":{{parcoursNumberOfStops}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/parcours",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "parcours"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "Parcours - Error Handling - 1",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "0f7f9b05-3b28-4e86-918a-421ddc2e5919",
+				  "exec": [
+					"pm.test(\"parcours - L'erreur est attrapée\", function () {",
+					"    pm.response.to.have.status(400);",
+					"});",
+					"",
+					"pm.test(\"parcours - L'erreur est expliquée\", function () {",
+					"    pm.expect(pm.response.text()).to.include(\"type\");",
+					"});",
+					"",
+					"pm.test(\"parcours - L'erreur est expliquée\", function () {",
+					"    pm.expect(pm.response.text()).to.include(\"maximumLength\");",
+					"});",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "d2036e63-2907-46a7-a613-aaf557d08329",
+				  "exec": [
+					"var run",
+					"var iteration",
+					"",
+					"runRandom = Math.random();",
+					"if(runRandom>0.5){",
+					"    run = 2;",
+					"}else{",
+					"    run = 1;",
+					"}",
+					"",
+					"var iterationRandom = Math.random();",
+					"",
+					"if(iterationRandom<0.33){",
+					"    iteration = 1;",
+					"}else if(iterationRandom>0.67){",
+					"    iteration = 3;",
+					"}else{",
+					"    iteration = 2;",
+					"}",
+					"",
+					"targetRestaurantTypeVariable = \"randomRestaurantType-\" + run",
+					"targetMaximumLengthVariable = \"randomMaximumLength-\" + run",
+					"targetStartingPointVariable = \"startingPoint\" + run + \"-\" + iteration",
+					"",
+					"restaurantType = pm.globals.get(targetRestaurantTypeVariable)",
+					"maximumLength = pm.globals.get(targetMaximumLengthVariable)",
+					"startingPoint = pm.globals.get(targetStartingPointVariable)",
+					"",
+					"pm.globals.set(\"parcoursRestaurantType\", restaurantType)",
+					"pm.globals.set(\"parcoursMaximumLength\", maximumLength)",
+					"pm.globals.set(\"parcoursStartingPoint\", startingPoint)",
+					"pm.globals.set(\"parcoursNumberOfStops\", 10)",
+					"",
+					"Set.prototype.intersection = function(otherSet) ",
+					"{ ",
+					"    // creating new set to store intersection ",
+					"    var intersectionSet = new Set(); ",
+					"  ",
+					"    // Iterate over the values  ",
+					"    for(var elem of otherSet) ",
+					"    { ",
+					"        // if the other set contains a  ",
+					"        // similar value as of value[i] ",
+					"        // then add it to intersectionSet ",
+					"        if(this.has(elem)) ",
+					"            intersectionSet.add(elem); ",
+					"    } ",
+					"  ",
+					"// return values of intersectionSet ",
+					"return intersectionSet;                 ",
+					"} "
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "type": "text",
+				  "value": "application/json"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":[123],\n    \"maximumLength\":\"badValue\",\n    \"startingPoint\":{{parcoursStartingPoint}},\n    \"numberOfStops\":{{parcoursNumberOfStops}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/parcours",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "parcours"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "Parcours - Error Handling - 2",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "f82a19fc-e9eb-47e1-ac42-5d9ed8286df0",
+				  "exec": [
+					"pm.test(\"parcours - L'erreur est attrapée\", function () {",
+					"    pm.response.to.have.status(400);",
+					"});",
+					"",
+					"pm.test(\"parcours - L'erreur est expliquée\", function () {",
+					"    pm.expect(pm.response.text()).to.include(\"startingPoint\");",
+					"});",
+					"",
+					"pm.test(\"parcours - L'erreur est expliquée\", function () {",
+					"    pm.expect(pm.response.text()).to.include(\"numberOfStops\");",
+					"});",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "324c5406-fe4a-46f8-bccc-c6c0754017f5",
+				  "exec": [
+					"var run",
+					"var iteration",
+					"",
+					"runRandom = Math.random();",
+					"if(runRandom>0.5){",
+					"    run = 2;",
+					"}else{",
+					"    run = 1;",
+					"}",
+					"",
+					"var iterationRandom = Math.random();",
+					"",
+					"if(iterationRandom<0.33){",
+					"    iteration = 1;",
+					"}else if(iterationRandom>0.67){",
+					"    iteration = 3;",
+					"}else{",
+					"    iteration = 2;",
+					"}",
+					"",
+					"targetRestaurantTypeVariable = \"randomRestaurantType-\" + run",
+					"targetMaximumLengthVariable = \"randomMaximumLength-\" + run",
+					"targetStartingPointVariable = \"startingPoint\" + run + \"-\" + iteration",
+					"",
+					"restaurantType = pm.globals.get(targetRestaurantTypeVariable)",
+					"maximumLength = pm.globals.get(targetMaximumLengthVariable)",
+					"startingPoint = pm.globals.get(targetStartingPointVariable)",
+					"",
+					"pm.globals.set(\"parcoursRestaurantType\", restaurantType)",
+					"pm.globals.set(\"parcoursMaximumLength\", maximumLength)",
+					"pm.globals.set(\"parcoursStartingPoint\", startingPoint)",
+					"pm.globals.set(\"parcoursNumberOfStops\", 10)",
+					"",
+					"Set.prototype.intersection = function(otherSet) ",
+					"{ ",
+					"    // creating new set to store intersection ",
+					"    var intersectionSet = new Set(); ",
+					"  ",
+					"    // Iterate over the values  ",
+					"    for(var elem of otherSet) ",
+					"    { ",
+					"        // if the other set contains a  ",
+					"        // similar value as of value[i] ",
+					"        // then add it to intersectionSet ",
+					"        if(this.has(elem)) ",
+					"            intersectionSet.add(elem); ",
+					"    } ",
+					"  ",
+					"// return values of intersectionSet ",
+					"return intersectionSet;                 ",
+					"} "
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "type": "text",
+				  "value": "application/json"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":{{parcoursRestaurantType}},\n    \"maximumLength\":{{parcoursMaximumLength}},\n    \"startingPoint\":\"startingPoint\",\n    \"numberOfStops\":\"badValue\"\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/parcours",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "parcours"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "Parcours - Error Handling - 3",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "24bc4da6-b646-4c15-a1e7-ec1910bd2761",
+				  "exec": [
+					"pm.test(\"parcours - L'erreur est attrapée\", function () {",
+					"    pm.response.to.have.status(404);",
+					"});",
+					"",
+					"",
+					"pm.test(\"parcours - L'erreur est expliquée\", function () {",
+					"    pm.expect(pm.response.text()).to.include(\"maximumLength\");",
+					"});",
+					"",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "6448fb88-e146-4b43-b7bc-dd41e3a4fa97",
+				  "exec": [
+					"longueurCyclable = pm.globals.get(\"longueurCyclable\")",
+					"longueurCyclableImpossible = longueurCyclable * 1.15",
+					"pm.globals.set(\"longueurCyclableImpossible\", longueurCyclableImpossible)",
+					"console.log(longueurCyclableImpossible)",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "type": "text",
+				  "value": "application/json"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":{{parcoursRestaurantType}},\n    \"maximumLength\":{{longueurCyclableImpossible}},\n    \"startingPoint\":{{parcoursStartingPoint}},\n    \"numberOfStops\":{{parcoursNumberOfStops}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/parcours",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "parcours"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  },
+		  {
+			"name": "Parcours - Error Handling - 4",
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "id": "1536f635-6de5-48df-8f12-e44bc69fed8f",
+				  "exec": [
+					"pm.test(\"parcours - L'erreur est attrapée\", function () {",
+					"    pm.response.to.have.status(404);",
+					"});",
+					"",
+					"pm.test(\"parcours - L'erreur est expliquée\", function () {",
+					"    pm.expect(pm.response.text()).to.include(\"type\");",
+					"});",
+					""
+				  ],
+				  "type": "text/javascript"
+				}
+			  },
+			  {
+				"listen": "prerequest",
+				"script": {
+				  "id": "96b5d9d2-c7de-42c1-8603-9d14b175f36b",
+				  "exec": [
+					"var run",
+					"var iteration",
+					"",
+					"runRandom = Math.random();",
+					"if(runRandom>0.5){",
+					"    run = 2;",
+					"}else{",
+					"    run = 1;",
+					"}",
+					"",
+					"var iterationRandom = Math.random();",
+					"",
+					"if(iterationRandom<0.33){",
+					"    iteration = 1;",
+					"}else if(iterationRandom>0.67){",
+					"    iteration = 3;",
+					"}else{",
+					"    iteration = 2;",
+					"}",
+					"",
+					"targetRestaurantTypeVariable = \"randomRestaurantType-\" + run",
+					"targetMaximumLengthVariable = \"randomMaximumLength-\" + run",
+					"targetStartingPointVariable = \"startingPoint\" + run + \"-\" + iteration",
+					"",
+					"restaurantType = pm.globals.get(targetRestaurantTypeVariable)",
+					"maximumLength = pm.globals.get(targetMaximumLengthVariable)",
+					"startingPoint = pm.globals.get(targetStartingPointVariable)",
+					"",
+					"pm.globals.set(\"parcoursRestaurantType\", restaurantType)",
+					"pm.globals.set(\"parcoursMaximumLength\", maximumLength)",
+					"pm.globals.set(\"parcoursStartingPoint\", startingPoint)",
+					"pm.globals.set(\"parcoursNumberOfStops\", 10)",
+					"",
+					"Set.prototype.intersection = function(otherSet) ",
+					"{ ",
+					"    // creating new set to store intersection ",
+					"    var intersectionSet = new Set(); ",
+					"  ",
+					"    // Iterate over the values  ",
+					"    for(var elem of otherSet) ",
+					"    { ",
+					"        // if the other set contains a  ",
+					"        // similar value as of value[i] ",
+					"        // then add it to intersectionSet ",
+					"        if(this.has(elem)) ",
+					"            intersectionSet.add(elem); ",
+					"    } ",
+					"  ",
+					"// return values of intersectionSet ",
+					"return intersectionSet;                 ",
+					"} "
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			],
+			"protocolProfileBehavior": {
+			  "disableBodyPruning": true,
+			  "disabledSystemHeaders": {
+				"content-type": true
+			  }
+			},
+			"request": {
+			  "method": "GET",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "type": "text",
+				  "value": "application/json"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n    \"type\":[\"typeDeRestaurantQuiNestPasDansLaBD\"],\n    \"maximumLength\":{{parcoursMaximumLength}},\n    \"startingPoint\":{{parcoursStartingPoint}},\n    \"numberOfStops\":{{parcoursNumberOfStops}}\n}"
+			  },
+			  "url": {
+				"raw": "http://{{host}}:{{port}}/parcours",
+				"protocol": "http",
+				"host": [
+				  "{{host}}"
+				],
+				"port": "{{port}}",
+				"path": [
+				  "parcours"
+				]
+			  }
+			},
+			"response": [
+
+			]
+		  }
+		],
+		"protocolProfileBehavior": {
+
+		}
+	  }
 	],
-	"protocolProfileBehavior": {}
-}
+	"protocolProfileBehavior": {
+
+	}
+  }
