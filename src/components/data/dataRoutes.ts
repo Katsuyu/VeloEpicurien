@@ -15,4 +15,9 @@ router.get('/transformed_data', handler(async (req, res) => {
   res.send(data);
 }));
 
+router.get('/type', handler(async (req, res) => {
+  const data = await controllers.getRestaurantsTypes();
+  res.send(data);
+}));
+
 export default router;

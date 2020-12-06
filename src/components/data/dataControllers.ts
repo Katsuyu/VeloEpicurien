@@ -35,3 +35,16 @@ export async function getTransformedData() {
 
   return { restaurants, longueurCyclable };
 }
+
+export async function getRestaurantsTypes() {
+  const restaurantsStats = await mongo
+    .db('veloepicurien')
+    .collection('restaurants')
+    .aggregate([
+      { $unwind: { path: '$types' } },
+      { $group: { _id: '$types', count: { $sum: 1 } } },
+    ])
+    .toArray();
+
+  return restaurantsStats.map((stat) => stat._id);
+}

@@ -3,7 +3,7 @@ import createError from 'http-errors';
 
 import neo4j from '../../appNeo4j';
 
-import { GenerateItineraryDto } from './itineraryTypes';
+import { GenerateItineraryDto, StartingPointDto } from './itineraryTypes';
 import Point from './Point';
 import Restaurant from './Restaurant';
 import logger from '../../appLogger';
@@ -64,7 +64,6 @@ async function itineraryBetween(from: Point, to: Point) {
 
   let origin = to.id;
 
-  console.log(`From ${from.id} to ${to.id}`);
   while (origin !== from.id) {
     const query = `
     MATCH
@@ -80,12 +79,10 @@ async function itineraryBetween(from: Point, to: Point) {
     );
 
     segment.add(point);
-    console.log(`Added ${point.id}`);
     origin = point.id;
   }
 
   segment.reverse();
-  console.log(`Length: ${segment.points.length}`);
   return segment;
 }
 
@@ -150,4 +147,13 @@ export async function generateItinerary(payload: GenerateItineraryDto) {
     type: 'FeatureCollection',
     features: await Promise.all(itinerary.map(async (step) => step.toFeature())),
   };
+}
+
+export async function getStartingPoint(payload: StartingPointDto) {
+  const minLat = 48.883731;
+  const maxLat = 48.897501;
+  const minLng = 2.328813;
+  const maxLng = 2.370398;
+
+  return {};
 }

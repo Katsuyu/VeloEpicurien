@@ -51,3 +51,13 @@ export class GenerateItineraryDto {
   @IsString({ each: true })
   type!: Array<string>;
 }
+
+export class StartingPointDto {
+  @IsNumber()
+  @IsPositive()
+  maximumLength!: number;
+
+  @IsArray()
+  @IsString({ each: true })
+  type!: Array<string>;
+}
