@@ -58,6 +58,37 @@ async function findNearestRestaurant(from: string, types: string[], excludedRest
   };
 }
 
+async function itineraryBetween(from: Point, to: Point) {
+  const segment = new Segment();
+  segment.add(to);
+
+  let origin = to.id;
+
+  console.log(`From ${from.id} to ${to.id}`);
+  while (origin !== from.id) {
+    const query = `
+    MATCH
+    (origin:Point {id: "${origin}"}) <-[]- (p:Point)
+    WHERE
+    p.cost < origin.cost
+    RETURN p ORDER BY p.cost ASC LIMIT 1
+    `;
+    // eslint-disable-next-line no-await-in-loop
+    const result = await neo4j.run(query);
+    const point = Point.fromNeo4j(
+      result.records[0].get('p'),
+    );
+
+    segment.add(point);
+    console.log(`Added ${point.id}`);
+    origin = point.id;
+  }
+
+  segment.reverse();
+  console.log(`Length: ${segment.points.length}`);
+  return segment;
+}
+
 export async function generateItinerary(payload: GenerateItineraryDto) {
   const { startingPoint } = payload;
 
@@ -87,7 +118,6 @@ export async function generateItinerary(payload: GenerateItineraryDto) {
   const visitedRestaurants = [];
   let totalDistance = initialDistance;
   let last: Point = itineraryStart;
-  let segment = new Segment([itineraryStart]);
 
   while (totalDistance < 0.9 * payload.maximumLength) {
     // eslint-disable-next-line no-await-in-loop
@@ -99,12 +129,12 @@ export async function generateItinerary(payload: GenerateItineraryDto) {
     };
 
     if (point.id !== last.id) {
+      // eslint-disable-next-line no-await-in-loop
+      itinerary.push(await itineraryBetween(last, point));
       totalDistance += point.distance;
       last = point;
       logger.info(`Moving to point ${point.id} (${point.distance}m) - total distance: ${totalDistance}m`);
-      segment.add(point);
-      itinerary.push(segment);
-      segment = new Segment([point]);
+      // eslint-disable-next-line no-await-in-loop
     }
 
     visitedRestaurants.push(restaurant.id);

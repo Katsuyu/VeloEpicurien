@@ -51,4 +51,3 @@ export class GenerateItineraryDto {
   @IsString({ each: true })
   type!: Array<string>;
 }
-

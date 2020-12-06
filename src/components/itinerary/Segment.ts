@@ -11,6 +11,10 @@ export default class Segment {
     this.points.push(point);
   }
 
+  reverse() {
+    this.points.reverse();
+  }
+
   toFeature() {
     if (this.points.length < 2) {
       return null;
