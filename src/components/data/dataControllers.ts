@@ -31,7 +31,7 @@ export async function getTransformedData() {
 
   const longueurCyclable = (await neo4j
     .run('MATCH ()-[segment:Route]-() RETURN segment')
-  ).records.length / 2;
+  ).records.reduce((acc, val) => acc + val.get('segment').properties.length, 0);
 
   return { restaurants, longueurCyclable };
 }
