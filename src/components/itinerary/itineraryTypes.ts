@@ -4,11 +4,10 @@ import {
   IsArray,
   IsDefined,
   IsEnum,
-  IsNumber, IsPositive, IsString,
+  IsNumber, IsPositive, IsString, Max,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import mongo from '../../appMongo';
 
 export enum GeoType {
   POINT = 'Point'

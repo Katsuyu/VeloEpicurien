@@ -33,7 +33,7 @@ export default class Restaurant {
       },
       properties: {
         name: restaurant.name,
-        Type: restaurant.types,
+        type: restaurant.types,
         rating: restaurant.rating,
         totalRating: restaurant.totalRating,
       },

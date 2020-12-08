@@ -8,6 +8,7 @@ import Point from './Point';
 import Restaurant from './Restaurant';
 import logger from '../../appLogger';
 import Segment from './Segment';
+import { getRestaurantsTypes, getTransformedData } from '../data/dataControllers';
 
 async function findNearestRestaurant(from: string, types: string[], excludedRestaurants: string[]) {
   const typesFilter = types.length !== 0
@@ -89,14 +90,32 @@ async function itineraryBetween(from: Point, to: Point) {
   return segment;
 }
 
-function adjustTotalDistance(
-  itinerary: Array<Restaurant | Segment>, totalDistance: number, maxDistance: number,
+async function adjustTotalDistance(
+  itinerary: Array<Restaurant | Segment>, last: Point, totalDistance: number, maxDistance: number,
 ) {
   let distance = totalDistance;
   logger.info(`Itinerary initially has ${distance}m length`);
   logger.info(
     `Ideal length : between ${(0.9 * maxDistance).toFixed(2)} and ${(1.1 * maxDistance).toFixed(2)}`,
   );
+
+
+  if (distance < 0.9 * maxDistance) {
+    const query = `
+    MATCH (p:Point)
+    WHERE p.cost <> gds.util.infinity()
+    RETURN p ORDER BY p.cost DESC LIMIT 1`;
+
+    const result = await neo4j.run(query);
+    const farAwayPoint = Point.fromNeo4j(
+      result.records[0].get('p'),
+    );
+    const segment = await itineraryBetween(last, farAwayPoint);
+    itinerary.push(segment);
+    distance += segment.getDistance();
+  }
+
+  logger.info(`Itinerary allonged to ${distance}m`);
 
   while (distance > 1.1 * maxDistance) {
     const elem = itinerary[itinerary.length - 1];
@@ -144,6 +163,19 @@ function adjustStopNumber(itinerary: Array<Restaurant | Segment>, numberOfStops:
 }
 
 export async function generateItinerary(payload: GenerateItineraryDto) {
+  const { longueurCyclable } = await getTransformedData();
+  if (payload.maximumLength >= longueurCyclable) {
+    throw createError(httpStatus.NOT_FOUND, `'maximumLength' cannot exceed ${longueurCyclable}`);
+  }
+
+  const possibleTypes = await getRestaurantsTypes();
+  const areAllTypesPossible = payload.type
+    .every((type) => possibleTypes
+      .includes(type));
+  if (!areAllTypesPossible) {
+    throw createError(httpStatus.NOT_FOUND, '\'type\' contains unknown types');
+  }
+
   const { startingPoint } = payload;
 
   const query = `
@@ -182,6 +214,10 @@ export async function generateItinerary(payload: GenerateItineraryDto) {
       restaurant: Restaurant;
     };
 
+    if (!Number.isFinite(point.distance)) {
+      break;
+    }
+
     if (point.id !== last.id) {
       totalDistance += point.distance;
       // eslint-disable-next-line no-await-in-loop
@@ -196,12 +232,13 @@ export async function generateItinerary(payload: GenerateItineraryDto) {
     logger.info(`Near point ${last.id}, found restaurant ${restaurant.id}`);
   }
 
-  totalDistance = adjustTotalDistance(itinerary, totalDistance, payload.maximumLength);
+  totalDistance = await adjustTotalDistance(itinerary, last, totalDistance, payload.maximumLength);
+  const stopNumbers = adjustStopNumber(itinerary, payload.numberOfStops);
+
   if (totalDistance < 0.9 * payload.maximumLength || totalDistance > 1.1 * payload.maximumLength) {
-    throw createError(httpStatus.EXPECTATION_FAILED, 'No itinerary found within +-10% of the asked length');
+    throw createError(httpStatus.EXPECTATION_FAILED, `No itinerary found within +-10% of the asked length (we found one with ${totalDistance}m and ${stopNumbers} restaurants`);
   }
 
-  const stopNumbers = adjustStopNumber(itinerary, payload.numberOfStops);
   if (stopNumbers <= 0) {
     throw createError(
       httpStatus.EXPECTATION_FAILED,
@@ -220,10 +257,63 @@ export async function generateItinerary(payload: GenerateItineraryDto) {
 }
 
 export async function getStartingPoint(payload: StartingPointDto) {
+  const { longueurCyclable } = await getTransformedData();
+  if (payload.maximumLength >= longueurCyclable) {
+    throw createError(httpStatus.NOT_FOUND, `'maximumLength' cannot exceed ${longueurCyclable}`);
+  }
+
+  const possibleTypes = await getRestaurantsTypes();
+  const areAllTypesPossible = payload.type
+    .every((type) => possibleTypes
+      .includes(type));
+  if (!areAllTypesPossible) {
+    throw createError(httpStatus.NOT_FOUND, '\'type\' contains unknown types');
+  }
+
+  const typesFilter = payload.type.length !== 0
+    ? `WHERE any(genre in resto.types WHERE genre IN ${JSON.stringify(payload.type)})`
+    : '';
+
+  const query = `
+  MATCH (p:Point) <-[:isLocatedAt]- (resto:Restaurant)
+  ${typesFilter}
+  RETURN p, resto, rand() as r
+  ORDER BY r LIMIT 1
+  `;
+
+  const result = await neo4j.run(query);
+  if (!result.records || result.records.length === 0) {
+    throw createError(httpStatus.BAD_REQUEST, `No restaurants found with type ${JSON.stringify(payload.type)}`);
+  }
+
+  const point = Point.fromNeo4j(
+    result.records[0].get('p'),
+  );
+
+  return {
+    startingPoint: {
+      type: 'Point',
+      coordinates: [point.longitude, point.latitude],
+    },
+  };
+
+/*
   const minLat = 48.883731;
   const maxLat = 48.897501;
   const minLng = 2.328813;
   const maxLng = 2.370398;
 
-  return {};
+  const latDiff = maxLat - minLat;
+  const lngDiff = maxLng - minLng;
+
+  const lat = minLat + 0.15 * latDiff + (Math.random() * 0.7 * latDiff);
+  const lng = minLng + 0.15 * lngDiff + (Math.random() * 0.7 * lngDiff);
+
+  return {
+    startingPoint: {
+      type: 'Point',
+      coordinates: [lng, lat],
+    },
+  };
+*/
 }
