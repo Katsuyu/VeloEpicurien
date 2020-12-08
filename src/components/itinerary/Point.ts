@@ -1,7 +1,7 @@
 export default class Point {
   public readonly id: string;
 
-  public readonly distance: number;
+  public distance: number;
 
   public readonly latitude: number;
 
@@ -15,6 +15,15 @@ export default class Point {
     this.longitude = longitude;
   }
 
+  static copy(point: Point) {
+    return new Point(
+      point.id,
+      point.distance,
+      point.latitude,
+      point.longitude,
+    );
+  }
+
   static fromNeo4j(data: any) {
     return new Point(
       data.properties.id,
@@ -22,5 +31,9 @@ export default class Point {
       data.properties.lat,
       data.properties.lng,
     );
+  }
+
+  setDistance(distance: number) {
+    this.distance = distance;
   }
 }

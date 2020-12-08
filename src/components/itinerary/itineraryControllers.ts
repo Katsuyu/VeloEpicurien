@@ -60,23 +60,26 @@ async function findNearestRestaurant(from: string, types: string[], excludedRest
 
 async function itineraryBetween(from: Point, to: Point) {
   const segment = new Segment();
-  segment.add(to);
+  segment.add(Point.copy(to));
 
   let origin = to.id;
 
   while (origin !== from.id) {
     const query = `
     MATCH
-    (origin:Point {id: "${origin}"}) <-[]- (p:Point)
+    (origin:Point {id: "${origin}"}) <-[r]- (p:Point)
     WHERE
     p.cost < origin.cost
-    RETURN p ORDER BY p.cost ASC LIMIT 1
+    RETURN p, r ORDER BY p.cost ASC LIMIT 1
     `;
     // eslint-disable-next-line no-await-in-loop
     const result = await neo4j.run(query);
     const point = Point.fromNeo4j(
       result.records[0].get('p'),
     );
+    const route = result.records[0].get('r');
+    point.setDistance(0);
+    segment.points[segment.points.length - 1].setDistance(route.properties.length);
 
     segment.add(point);
     origin = point.id;
@@ -86,8 +89,40 @@ async function itineraryBetween(from: Point, to: Point) {
   return segment;
 }
 
+function adjustTotalDistance(
+  itinerary: Array<Restaurant | Segment>, totalDistance: number, maxDistance: number,
+) {
+  let distance = totalDistance;
+  logger.info(`Itinerary initially has ${distance}m length`);
+  logger.info(
+    `Ideal length : between ${(0.9 * maxDistance).toFixed(2)} and ${(1.1 * maxDistance).toFixed(2)}`,
+  );
+
+  while (distance > 1.1 * maxDistance) {
+    const elem = itinerary[itinerary.length - 1];
+    if (elem instanceof Segment) {
+      if (elem.points.length === 0) {
+        itinerary.pop();
+      }
+      const removedPoint = elem.pop();
+      if (removedPoint) {
+        distance -= removedPoint.distance;
+        logger.info(`Removing part of segment of ${removedPoint.distance}m`);
+      }
+    } else {
+      itinerary.pop();
+      logger.info(`Removing restaurant ${elem.id}`);
+    }
+  }
+
+  logger.info(`After adjustments, the itinerary has ${distance}m length`);
+  return distance;
+}
+
 function adjustStopNumber(itinerary: Array<Restaurant | Segment>, numberOfStops: number) {
   let stopNumber = itinerary.reduce((acc, val) => acc + +(val instanceof Restaurant), 0);
+  logger.info(`Itinerary initially has ${stopNumber} restaurants.`);
+  logger.info(`Ideal number of restaurants : ${numberOfStops}`);
 
   let toggle = false;
   let { length } = itinerary;
@@ -103,6 +138,9 @@ function adjustStopNumber(itinerary: Array<Restaurant | Segment>, numberOfStops:
       toggle = !toggle;
     }
   }
+
+  logger.info(`After adjustments, the itinerary has ${stopNumber} restaurants`);
+  return stopNumber;
 }
 
 export async function generateItinerary(payload: GenerateItineraryDto) {
@@ -145,9 +183,9 @@ export async function generateItinerary(payload: GenerateItineraryDto) {
     };
 
     if (point.id !== last.id) {
+      totalDistance += point.distance;
       // eslint-disable-next-line no-await-in-loop
       itinerary.push(await itineraryBetween(last, point));
-      totalDistance += point.distance;
       last = point;
       logger.info(`Moving to point ${point.id} (${point.distance}m) - total distance: ${totalDistance}m`);
       // eslint-disable-next-line no-await-in-loop
@@ -155,18 +193,29 @@ export async function generateItinerary(payload: GenerateItineraryDto) {
 
     visitedRestaurants.push(restaurant.id);
     itinerary.push(restaurant);
-    logger.info(`Starting from point ${last.id}, found restaurant ${restaurant.id}`);
+    logger.info(`Near point ${last.id}, found restaurant ${restaurant.id}`);
   }
 
-  if (totalDistance > 1.1 * payload.maximumLength) {
+  totalDistance = adjustTotalDistance(itinerary, totalDistance, payload.maximumLength);
+  if (totalDistance < 0.9 * payload.maximumLength || totalDistance > 1.1 * payload.maximumLength) {
     throw createError(httpStatus.EXPECTATION_FAILED, 'No itinerary found within +-10% of the asked length');
   }
 
-  adjustStopNumber(itinerary, payload.numberOfStops);
+  const stopNumbers = adjustStopNumber(itinerary, payload.numberOfStops);
+  if (stopNumbers <= 0) {
+    throw createError(
+      httpStatus.EXPECTATION_FAILED,
+      'With this starting point and the asked length, there are no restaurants around',
+    );
+  }
 
   return {
     type: 'FeatureCollection',
-    features: await Promise.all(itinerary.map(async (step) => step.toFeature())),
+    features: await Promise.all(
+      itinerary
+        .map(async (step) => step.toFeature())
+        .filter((step) => !!step),
+    ),
   };
 }
 

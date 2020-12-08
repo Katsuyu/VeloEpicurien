@@ -11,8 +11,16 @@ export default class Segment {
     this.points.push(point);
   }
 
+  pop() {
+    return this.points.pop();
+  }
+
   reverse() {
     this.points.reverse();
+  }
+
+  getDistance() {
+    return this.points.reduce((acc, val) => acc + val.distance, 0);
   }
 
   toFeature() {
@@ -28,9 +36,7 @@ export default class Segment {
         )],
       },
       properties: {
-        length: this.points.reduce(
-          (acc, val) => acc + val.distance, 0,
-        ),
+        length: this.getDistance(),
       },
     };
   }
